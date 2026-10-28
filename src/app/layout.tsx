@@ -2,6 +2,7 @@ import { Suspense } from "react"
 import type { Metadata, Viewport } from "next"
 import { Fraunces, Geist, Geist_Mono } from "next/font/google"
 
+import { WhatsAppButton } from "@/components/contact/whatsapp-button"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
 import { SmoothScroll } from "@/components/providers/smooth-scroll"
@@ -9,6 +10,7 @@ import { InlineScript } from "@/components/theme/inline-script"
 import { ThemeProvider } from "@/components/theme/theme-provider"
 import { themeScript } from "@/components/theme/theme-script"
 import { siteConfig } from "@/lib/site"
+import { WHATSAPP_NUMBER, whatsappNumberFrom } from "@/lib/whatsapp"
 import { getHomeContent } from "@/lib/wordpress"
 import "./globals.css"
 
@@ -76,6 +78,21 @@ async function CmsFooter() {
   return <SiteFooter footer={footer} socials={contact.socials} note={contact.note} />
 }
 
+/** Floating WhatsApp chat, using the number from the site's WhatsApp links. */
+async function CmsWhatsAppButton() {
+  const { hero, footer, contact, services } = await getHomeContent()
+  const number = [hero.primaryCta, footer.whatsapp]
+    .map((link) => (link ? whatsappNumberFrom(link.href) : null))
+    .find(Boolean)
+  return (
+    <WhatsAppButton
+      number={number ?? WHATSAPP_NUMBER}
+      avatar={contact.image}
+      quickReplies={services?.items.map((item) => item.title) ?? []}
+    />
+  )
+}
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -104,6 +121,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </main>
             <Suspense fallback={null}>
               <CmsFooter />
+            </Suspense>
+            <Suspense fallback={null}>
+              <CmsWhatsAppButton />
             </Suspense>
           </SmoothScroll>
         </ThemeProvider>

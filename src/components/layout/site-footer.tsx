@@ -10,6 +10,7 @@ import { SocialIcon, socialLabel } from "@/components/contact/social-icon"
 import { Magnetic } from "@/components/motion/magnetic"
 import { Button } from "@/components/ui/button"
 import { gsap, useGSAP } from "@/lib/gsap"
+import { handleSectionLinkClick } from "@/lib/section-scroll"
 import { siteConfig } from "@/lib/site"
 import { cn } from "@/lib/utils"
 import type { FooterContent, SocialLink } from "@/lib/wordpress"
@@ -214,7 +215,11 @@ export function SiteFooter({
               <ul className="mt-5 space-y-3">
                 {group.links.map((link) => (
                   <li key={`${link.label}-${link.href}`}>
-                    <Link href={link.href} className="group inline-flex items-center gap-2 text-sm text-foreground/75 transition-colors hover:text-foreground">
+                    <Link
+                      href={link.href}
+                      onClick={(event) => handleSectionLinkClick(event, link.href)}
+                      className="group inline-flex items-center gap-2 text-sm text-foreground/75 transition-colors hover:text-foreground"
+                    >
                       <span className="h-px w-0 bg-gold transition-[width] duration-300 group-hover:w-4" />
                       <span className="capitalize">{link.label}</span>
                     </Link>

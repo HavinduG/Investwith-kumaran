@@ -7,6 +7,7 @@ import { ArrowUpRight, MessageCircle, Mouse } from "lucide-react"
 import { Magnetic } from "@/components/motion/magnetic"
 import { Button } from "@/components/ui/button"
 import { gsap, ScrollTrigger, SplitText, useGSAP } from "@/lib/gsap"
+import { externalLinkProps } from "@/lib/utils"
 import type { CmsLink, HeroContent } from "@/lib/wordpress"
 import { HeroBackdrop } from "./hero-backdrop"
 import { HeroMarquee } from "./hero-marquee"
@@ -230,7 +231,7 @@ export function HeroSection({ hero, bookingCta }: { hero: HeroContent; bookingCt
               {hero.primaryCta && (
                 <Magnetic>
                   <Button asChild variant="gold" size="xl">
-                    <Link href={hero.primaryCta.href}>
+                    <Link href={hero.primaryCta.href} {...externalLinkProps(hero.primaryCta.href)}>
                       <MessageCircle />
                       {hero.primaryCta.label}
                     </Link>

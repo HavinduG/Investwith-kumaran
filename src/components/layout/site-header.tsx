@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -23,9 +23,19 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { SECTION_SPANS } from "@/lib/routes"
+import { handleSectionLinkClick } from "@/lib/section-scroll"
 import { siteConfig } from "@/lib/site"
 import { cn } from "@/lib/utils"
 import type { HeaderContent } from "@/lib/wordpress"
+
+// Mobile menu close animation; scrolling waits for it to release the page
+const MENU_CLOSE_MS = 350
+// A section counts as "current" once its top passes this share of the viewport
+const ACTIVE_LINE = 0.35
+
+/** "/#about" → "about"; "" for links without a hash. */
+const hashOf = (href: string) => (href.includes("#") ? href.slice(href.indexOf("#") + 1) : "")
 
 const EASE = [0.22, 1, 0.36, 1] as const
 
@@ -36,18 +46,52 @@ export function SiteHeader({ content }: { content: HeaderContent }) {
   const [hidden, setHidden] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [hovered, setHovered] = useState<string | null>(null)
+  // Section currently on screen: "home" near the top, a section id, or null between sections
+  const [activeSection, setActiveSection] = useState<string | null>("home")
 
   const { scrollY, scrollYProgress } = useScroll()
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 })
+
+  const updateActiveSection = useCallback(() => {
+    if (pathname !== "/") return
+    if (window.scrollY < window.innerHeight * 0.5) return setActiveSection("home")
+    const line = window.innerHeight * ACTIVE_LINE
+    const current = content.menu
+      .map((item) => hashOf(item.href))
+      .find((id) => {
+        if (!id) return false
+        const start = document.getElementById(id)?.getBoundingClientRect()
+        const end = document.getElementById(SECTION_SPANS[id] ?? id)?.getBoundingClientRect() ?? start
+        return start && end && start.top <= line && end.bottom > line
+      })
+    setActiveSection(current ?? null)
+  }, [content.menu, pathname])
+
+  // Measure once layout has settled, and again whenever the viewport resizes
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(updateActiveSection)
+    window.addEventListener("resize", updateActiveSection)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.removeEventListener("resize", updateActiveSection)
+    }
+  }, [updateActiveSection])
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0
     setScrolled(latest > 24)
     setHidden(latest > previous && latest > 320)
+    updateActiveSection()
   })
 
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`)
+  const isActive = (href: string) => {
+    const hash = hashOf(href)
+    // On the home page, follow the section in view
+    if (pathname === "/") return href === "/" ? activeSection === "home" : Boolean(hash) && activeSection === hash
+    if (href === "/") return false
+    // Elsewhere, "/#properties" stays lit on /properties/… pages
+    return hash ? pathname.startsWith(`/${hash}`) : pathname === href || pathname.startsWith(`${href}/`)
+  }
 
   return (
     <>
@@ -81,6 +125,7 @@ export function SiteHeader({ content }: { content: HeaderContent }) {
                   <li key={item.label} className="relative">
                     <Link
                       href={item.href}
+                      onClick={(event) => handleSectionLinkClick(event, item.href)}
                       onMouseEnter={() => setHovered(item.label)}
                       aria-current={active ? "page" : undefined}
                       className={cn(
@@ -138,6 +183,7 @@ function Logo({ logo }: { logo: HeaderContent["logo"] }) {
   return (
     <Link
       href="/"
+      onClick={(event) => handleSectionLinkClick(event, "/")}
       aria-label={`${siteConfig.name} — home`}
       className="group flex shrink-0 items-center gap-3 rounded-full"
     >
@@ -232,7 +278,10 @@ function MobileMenu({
                 >
                   <Link
                     href={item.href}
-                    onClick={() => onOpenChange(false)}
+                    onClick={(event) => {
+                      onOpenChange(false)
+                      handleSectionLinkClick(event, item.href, { delay: MENU_CLOSE_MS })
+                    }}
                     aria-current={isActive(item.href) ? "page" : undefined}
                     className="group flex items-baseline gap-4 border-b border-border/70 py-4"
                   >

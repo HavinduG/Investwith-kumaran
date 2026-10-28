@@ -10,6 +10,8 @@ import { ProjectCard } from "@/components/properties/project-card"
 import { ProjectGallery } from "@/components/properties/project-gallery"
 import { Button } from "@/components/ui/button"
 import { PROPERTIES_ANCHOR, projectHref } from "@/lib/routes"
+import { externalLinkProps } from "@/lib/utils"
+import { withWhatsAppMessage } from "@/lib/whatsapp"
 import { getHomeContent, getProject, getProjectSummaries } from "@/lib/wordpress"
 
 const MORE_COUNT = 3
@@ -260,7 +262,13 @@ async function PropertyDetails({ params }: Pick<PageProps<"/properties/[slug]">,
                       size="xl"
                       className="w-full bg-emerald text-white shadow-[0_10px_40px_-12px_var(--emerald)] hover:bg-emerald/90"
                     >
-                      <Link href={whatsappCta.href}>
+                      <Link
+                        href={withWhatsAppMessage(
+                          whatsappCta.href,
+                          `Hi Kamran, I'm interested in ${project.title}${project.location ? ` (${project.location})` : ""}. Could you share the latest availability and details?`
+                        )}
+                        {...externalLinkProps(whatsappCta.href)}
+                      >
                         <MessageCircle />
                         {whatsappCta.label}
                       </Link>

@@ -9,7 +9,8 @@ import { ArrowUpRight, Building2, MapPin, MessageCircle, Sparkles } from "lucide
 import { categoryLabel, FactIcon } from "@/components/properties/fact-icon"
 import { Button } from "@/components/ui/button"
 import { projectHref } from "@/lib/routes"
-import { cn } from "@/lib/utils"
+import { cn, externalLinkProps } from "@/lib/utils"
+import { withWhatsAppMessage } from "@/lib/whatsapp"
 import type { CmsLink, ProjectSummary } from "@/lib/wordpress"
 
 const pad = (n: number) => String(n).padStart(2, "0")
@@ -220,7 +221,10 @@ export function FeaturedProject({
               size="xl"
               className="bg-emerald text-white shadow-[0_10px_40px_-12px_var(--emerald)] hover:bg-emerald/90"
             >
-              <Link href={whatsappCta.href}>
+              <Link
+                href={withWhatsAppMessage(whatsappCta.href, `Hi Kamran, I'm interested in ${project.title}. Could you share more details?`)}
+                {...externalLinkProps(whatsappCta.href)}
+              >
                 <MessageCircle />
                 {whatsappCta.label}
               </Link>

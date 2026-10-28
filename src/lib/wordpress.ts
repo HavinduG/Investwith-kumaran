@@ -2,6 +2,8 @@ import "server-only"
 
 import { cacheLife, cacheTag } from "next/cache"
 
+import { isWhatsAppHref, whatsappNumberFrom, whatsappUrl } from "@/lib/whatsapp"
+
 const WORDPRESS_API_URL =
   process.env.WORDPRESS_API_URL ?? "http://investwithkamran.local/wp-json"
 const WORDPRESS_URL =
@@ -434,6 +436,7 @@ const SECTION_ANCHORS: Record<string, string> = {
   services: "/#services",
   properties: "/#properties",
   projects: "/#properties",
+  // Client content starts at the partners section and runs through testimonials
   clients: "/#partners",
   partners: "/#partners",
   rewards: "/#recognition",
@@ -462,6 +465,19 @@ function toLink(label: Maybe<string>, url: Maybe<string>, fallback?: string): Cm
   return value ? { label: value, href: toHref(url, fallback) } : null
 }
 
+/**
+ * WhatsApp button link: the first URL set in WordPress (a bare phone number also
+ * works), otherwise Kamran's number with a friendly prefilled message.
+ */
+function toWhatsAppLink(label: Maybe<string>, ...urls: Maybe<string>[]): CmsLink | null {
+  const value = text(label)
+  if (!value) return null
+  const url = urls.map(text).find(Boolean)
+  if (!url) return { label: value, href: whatsappUrl() }
+  const number = whatsappNumberFrom(url)
+  return { label: value, href: number && !isWhatsAppHref(url) ? whatsappUrl(undefined, number) : toHref(url) }
+}
+
 function normalizeHome(acf: HomeACF): HomeContent {
   return {
     header: {
@@ -478,7 +494,7 @@ function normalizeHome(acf: HomeACF): HomeContent {
       image: toImage(acf.hero_image, "Portrait of Kamran, Dubai property adviser"),
       roles: list(acf.hero_job_role).map((r) => text(r.job_role_name)).filter(Boolean),
       description: text(acf.hero_description),
-      primaryCta: toLink(acf.hero_section_button_1, acf.hero_section_button_1_url),
+      primaryCta: toWhatsAppLink(acf.hero_section_button_1, acf.hero_section_button_1_url),
       secondaryCta: toLink(acf.hero_section_button_2, acf.hero_section_button_2_url),
       marquee: list(acf.hero_scroll_bar).map((r) => text(r.scroll_name)).filter(Boolean),
     },
@@ -502,7 +518,7 @@ function normalizeHome(acf: HomeACF): HomeContent {
       logo: toImage(acf.footer_logo, "Invest with Kamran"),
       title: text(acf.footer_title),
       // Empty URLs reuse the matching hero/header buttons
-      whatsapp: toLink(acf.footer_button_1, acf.footer_button_1_url, toHref(acf.hero_section_button_1_url)),
+      whatsapp: toWhatsAppLink(acf.footer_button_1, acf.footer_button_1_url, acf.hero_section_button_1_url),
       booking: toLink(acf.footer_button_2, acf.footer_button_2_url, toHref(acf.header_button_1_url)),
       groups: list(acf.footer_links)
         .map((group) => ({

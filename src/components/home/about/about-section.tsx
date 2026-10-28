@@ -8,7 +8,7 @@ import { ArrowRight, ArrowUpRight, MessageCircle, UserRound } from "lucide-react
 import { Magnetic } from "@/components/motion/magnetic"
 import { Button } from "@/components/ui/button"
 import { gsap, useGSAP } from "@/lib/gsap"
-import { splitTitle } from "@/lib/utils"
+import { externalLinkProps, splitTitle } from "@/lib/utils"
 import type { AboutContent, CmsLink } from "@/lib/wordpress"
 
 export function AboutSection({
@@ -295,7 +295,7 @@ export function AboutSection({
                     size="xl"
                     className="bg-emerald text-white shadow-[0_10px_40px_-12px_var(--emerald)] hover:bg-emerald/90"
                   >
-                    <Link href={whatsappCta.href}>
+                    <Link href={whatsappCta.href} {...externalLinkProps(whatsappCta.href)}>
                       <MessageCircle />
                       {whatsappCta.label}
                     </Link>
