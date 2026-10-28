@@ -1,0 +1,366 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "lenis/dist/lenis.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-fraunces);
+  --font-display: var(--font-fraunces);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-gold-ink: var(--gold-ink);
+  --color-emerald: var(--emerald);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  --animate-spin-slow: spin 22s linear infinite;
+  --animate-spin-slower: spin 40s linear infinite reverse;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-aurora: aurora 18s ease-in-out infinite alternate;
+  --animate-ping-slow: ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  --animate-streak: streak 5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  --animate-beam: beam 5s ease-in-out infinite;
+  --animate-twinkle: twinkle 3.2s ease-in-out infinite;
+  --animate-marquee: marquee 60s linear infinite;
+}
+
+/* ------------------------------ Light theme ------------------------------ */
+:root {
+  --background: #f7f3ea;
+  --foreground: #10241f;
+  --card: #fffdf8;
+  --card-foreground: #10241f;
+  --popover: #fffdf8;
+  --popover-foreground: #10241f;
+  --primary: #10241f;
+  --primary-foreground: #f7f3ea;
+  --secondary: #efe8da;
+  --secondary-foreground: #10241f;
+  --muted: #ece5d6;
+  --muted-foreground: #56645f;
+  --accent: #e7dfcd;
+  --accent-foreground: #10241f;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: rgb(16 36 31 / 0.12);
+  --input: rgb(16 36 31 / 0.14);
+  --ring: #b88f45;
+  --chart-1: #c8a15a;
+  --chart-2: #1f6b5c;
+  --chart-3: #9a7330;
+  --chart-4: #3c8a78;
+  --chart-5: #10241f;
+  --radius: 0.75rem;
+  --sidebar: #f2ecdf;
+  --sidebar-foreground: #10241f;
+  --sidebar-primary: #10241f;
+  --sidebar-primary-foreground: #f7f3ea;
+  --sidebar-accent: #e7dfcd;
+  --sidebar-accent-foreground: #10241f;
+  --sidebar-border: rgb(16 36 31 / 0.12);
+  --sidebar-ring: #b88f45;
+
+  --gold: #c9a35d;
+  --gold-foreground: #15120a;
+  --gold-ink: #94702f;
+  --gold-light: #d9b56f;
+  --gold-deep: #6e5021;
+  --emerald: #1f6b5c;
+  --grain-opacity: 0.035;
+}
+
+/* ------------------------------ Dark theme ------------------------------- */
+.dark {
+  --background: #0a1613;
+  --foreground: #f3ecdf;
+  --card: #0f1f1b;
+  --card-foreground: #f3ecdf;
+  --popover: #0d1b18;
+  --popover-foreground: #f3ecdf;
+  --primary: #e7c98f;
+  --primary-foreground: #0a1613;
+  --secondary: #142824;
+  --secondary-foreground: #f3ecdf;
+  --muted: #13241f;
+  --muted-foreground: #9aaaa3;
+  --accent: #18302a;
+  --accent-foreground: #f3ecdf;
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: rgb(255 255 255 / 0.09);
+  --input: rgb(255 255 255 / 0.12);
+  --ring: #d9b56f;
+  --sidebar: #0d1b18;
+  --sidebar-foreground: #f3ecdf;
+  --sidebar-primary: #e7c98f;
+  --sidebar-primary-foreground: #0a1613;
+  --sidebar-accent: #18302a;
+  --sidebar-accent-foreground: #f3ecdf;
+  --sidebar-border: rgb(255 255 255 / 0.09);
+  --sidebar-ring: #d9b56f;
+
+  --gold: #d9b56f;
+  --gold-foreground: #13100a;
+  --gold-ink: #e3c27f;
+  --gold-light: #fff1cf;
+  --gold-deep: #b48a45;
+  --emerald: #2f8f7a;
+  --grain-opacity: 0.05;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background text-foreground;
+    text-rendering: optimizeLegibility;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  ::selection {
+    background: var(--gold);
+    color: var(--gold-foreground);
+  }
+
+  /* Film grain over the whole site */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    opacity: var(--grain-opacity);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* ------------------------------- Utilities ------------------------------- */
+@utility text-gold-gradient {
+  background-image: linear-gradient(
+    100deg,
+    var(--gold-deep) 0%,
+    var(--gold) 22%,
+    var(--gold-light) 40%,
+    var(--gold) 55%,
+    var(--gold-deep) 78%,
+    var(--gold) 100%
+  );
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 7s linear infinite;
+}
+
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+
+@utility text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in oklab, var(--foreground) 28%, transparent);
+}
+
+/* Rotating conic border (used by the portrait arch) */
+@property --angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@utility conic-border {
+  background: conic-gradient(
+    from var(--angle),
+    transparent 0%,
+    transparent 55%,
+    var(--gold) 72%,
+    var(--gold-light) 78%,
+    transparent 92%
+  );
+  animation: angle-spin 6s linear infinite;
+}
+
+@keyframes angle-spin {
+  to {
+    --angle: 360deg;
+  }
+}
+
+/* Light streak travelling along a hairline */
+@keyframes streak {
+  from {
+    left: -6rem;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+/* Spotlight beam breathing over the rewards stage */
+@keyframes beam {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.6);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Seamless loop for a track holding two identical halves */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Circular countdown drawn on an SVG circle with pathLength="100" */
+@keyframes ring {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Autoplay progress bar */
+@keyframes progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -220% center;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0);
+  }
+}
+
+@keyframes aurora {
+  0% {
+    transform: translate3d(-8%, -4%, 0) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(6%, 6%, 0) scale(1.15) rotate(20deg);
+  }
+  100% {
+    transform: translate3d(-4%, 10%, 0) scale(0.95) rotate(-10deg);
+  }
+}
+
+@keyframes reveal-fallback {
+  to {
+    opacity: 1;
+  }
+}
+
+/*
+ * Elements marked [data-reveal] are animated in by GSAP. They start hidden only
+ * when JS runs, and a delayed fallback shows them if hydration never happens.
+ */
+.js [data-anim-root]:not([data-anim-ready]) [data-reveal] {
+  opacity: 0;
+  animation: reveal-fallback 0.6s 2.5s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-anim-root]:not([data-anim-ready]) [data-reveal] {
+    opacity: 1;
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Theme switch: circular reveal driven from JS */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  z-index: 1;
+}
+
+/* Characters split by GSAP SplitText inside gradient text */
+.split-char {
+  color: var(--gold);
+}

@@ -1,0 +1,7 @@
+ignoredBuiltDependencies:
+  - onnxruntime-node
+  - protobufjs
+  - sharp
+  - unrs-resolver
+overrides:
+  "@huggingface/transformers>sharp": 0.35.5
