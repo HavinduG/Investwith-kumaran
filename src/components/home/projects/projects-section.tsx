@@ -1,14 +1,25 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, ArrowRight, ArrowUpRight, MoveHorizontal } from "lucide-react"
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
+import { ArrowLeft, ArrowRight, ArrowUpRight, MoveHorizontal, SearchX } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { ProjectCard } from "@/components/properties/project-card"
 import { gsap, useGSAP } from "@/lib/gsap"
 import type { CmsLink, ProjectSummary } from "@/lib/wordpress"
 import { FeaturedProject } from "./featured-project"
+import {
+  buildFilterGroups,
+  EMPTY_FILTERS,
+  type Filters,
+  matchesFilters,
+  ProjectFilters,
+  propertiesSearchHref,
+} from "@/components/properties/project-filters"
+
+const EASE = [0.22, 1, 0.36, 1] as const
 
 const pad = (n: number) => String(n).padStart(2, "0")
 
@@ -42,8 +53,21 @@ export function ProjectsSection({
   const [current, setCurrent] = useState(0)
   const [edges, setEdges] = useState({ start: true, end: false })
   const { lead, accent } = accentTail(title || "Properties worth a closer look")
+  const reduceMotion = useReducedMotion()
 
-  const [featured, ...rest] = projects
+  const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS)
+  const groups = useMemo(() => buildFilterGroups(projects), [projects])
+  const filtered = useMemo(() => projects.filter((project) => matchesFilters(project, filters)), [projects, filters])
+  const [featured, ...rest] = filtered
+
+  const changeFilters = (next: Filters) => {
+    setFilters(next)
+    // Start the rail from its first card again once the new list has rendered
+    window.requestAnimationFrame(() => {
+      rail.current?.scrollTo({ left: 0 })
+      onRailScroll()
+    })
+  }
 
   /* ------------------------------ Rail controls ------------------------------ */
   const cardStep = () => {
@@ -187,7 +211,7 @@ export function ProjectsSection({
     { scope: root, dependencies: [projects.length] }
   )
 
-  if (!featured) return null
+  if (!projects.length) return null
 
   return (
     <section
@@ -234,13 +258,57 @@ export function ProjectsSection({
         )}
       </div>
 
+      {/* --------------------------------- Filters --------------------------------- */}
+      {groups.length > 0 && (
+        <div data-reveal="lede" className="mx-auto mt-8 w-full max-w-7xl px-5 sm:px-8 lg:mt-10">
+          <ProjectFilters
+            groups={groups}
+            filters={filters}
+            onChange={changeFilters}
+            shown={filtered.length}
+            total={projects.length}
+            searchHref={propertiesSearchHref({ filters })}
+          />
+        </div>
+      )}
+
       {/* ------------------------------ Featured card ------------------------------ */}
-      <div data-reveal="featured" className="mx-auto mt-10 w-full max-w-7xl px-5 sm:px-8 lg:mt-14">
-        <FeaturedProject project={featured} whatsappCta={whatsappCta} />
+      <div data-reveal="featured" className="mx-auto mt-8 w-full max-w-7xl px-5 sm:px-8 lg:mt-10">
+        <AnimatePresence mode="wait" initial={false}>
+          {featured ? (
+            <motion.div
+              key={featured.id}
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -16, scale: 0.98 }}
+              transition={{ duration: 0.5, ease: EASE }}
+            >
+              <FeaturedProject project={featured} whatsappCta={whatsappCta} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4, ease: EASE }}
+              className="grid place-items-center rounded-[1.75rem] border border-dashed border-border px-6 py-16 text-center"
+            >
+              <SearchX className="size-10 text-gold/60" strokeWidth={1.25} />
+              <p className="mt-4 font-display text-2xl font-light">No properties match these filters</p>
+              <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+                Try another area or bedroom count — or tell us what you&rsquo;re looking for.
+              </p>
+              <Button variant="glass" size="xl" className="mt-6" onClick={() => changeFilters(EMPTY_FILTERS)}>
+                Show all properties
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ------------------------------ More to explore ------------------------------ */}
-      {(rest.length > 0 || cta) && (
+      {featured && (rest.length > 0 || cta) && (
         <div className="mt-16 lg:mt-20">
           <div
             data-reveal="rail-head"
@@ -294,22 +362,29 @@ export function ProjectsSection({
             onPointerCancel={endDrag}
             onClickCapture={onClickCapture}
             onDragStart={(event) => event.preventDefault()}
-            className="mt-8 snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none] data-dragging:cursor-grabbing data-dragging:snap-none data-dragging:select-none [&::-webkit-scrollbar]:hidden"
+            className="mt-8 snap-x snap-mandatory overflow-x-auto overscroll-x-contain scrollbar-none data-dragging:cursor-grabbing data-dragging:snap-none data-dragging:select-none [&::-webkit-scrollbar]:hidden"
           >
             <ul
               className="flex w-max gap-4 px-5 pt-2 pb-6 sm:gap-5 sm:px-8 xl:px-[calc((100vw-80rem)/2+2rem)]"
               style={{ perspective: 1400 }}
             >
-              {rest.map((project, i) => (
-                <li
-                  key={project.id}
-                  data-rail-item
-                  data-reveal="card"
-                  className="flex w-[min(82vw,21rem)] shrink-0 snap-start scroll-ml-5 sm:scroll-ml-8 xl:w-[22rem]"
-                >
-                  <ProjectCard project={project} index={i + 1} className="w-full" />
-                </li>
-              ))}
+              <AnimatePresence mode="popLayout" initial={false}>
+                {rest.map((project, i) => (
+                  <motion.li
+                    key={project.id}
+                    layout={!reduceMotion}
+                    initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.9, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.9, y: 20 }}
+                    transition={{ duration: 0.45, ease: EASE }}
+                    data-rail-item
+                    data-reveal="card"
+                    className="flex w-[min(82vw,21rem)] shrink-0 snap-start scroll-ml-5 sm:scroll-ml-8 xl:w-88"
+                  >
+                    <ProjectCard project={project} index={i + 1} className="w-full" />
+                  </motion.li>
+                ))}
+              </AnimatePresence>
 
               {cta && (
                 <li data-rail-item data-reveal="card" className="flex w-[min(82vw,19rem)] shrink-0 snap-start">

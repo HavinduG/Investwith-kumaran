@@ -179,7 +179,7 @@ export function AboutSection({
 
             <div className="mt-6 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
               <span data-reveal="signature" className="text-gold-gradient font-display text-3xl italic sm:text-4xl">
-                Kamran
+                Kamran Ali
               </span>
               <span
                 data-reveal="signature"

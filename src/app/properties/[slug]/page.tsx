@@ -9,7 +9,7 @@ import { categoryLabel, FactIcon } from "@/components/properties/fact-icon"
 import { ProjectCard } from "@/components/properties/project-card"
 import { ProjectGallery } from "@/components/properties/project-gallery"
 import { Button } from "@/components/ui/button"
-import { PROPERTIES_ANCHOR, projectHref } from "@/lib/routes"
+import { PROPERTIES_PAGE, projectHref } from "@/lib/routes"
 import { externalLinkProps } from "@/lib/utils"
 import { withWhatsAppMessage } from "@/lib/whatsapp"
 import { getHomeContent, getProject, getProjectSummaries } from "@/lib/wordpress"
@@ -80,7 +80,7 @@ async function PropertyDetails({ params }: Pick<PageProps<"/properties/[slug]">,
             </li>
             <ChevronRight aria-hidden className="size-3" />
             <li>
-              <Link href={PROPERTIES_ANCHOR} className="transition-colors hover:text-gold-ink">
+              <Link href={PROPERTIES_PAGE} className="transition-colors hover:text-gold-ink">
                 Properties
               </Link>
             </li>
@@ -295,7 +295,7 @@ async function PropertyDetails({ params }: Pick<PageProps<"/properties/[slug]">,
                 More properties <span className="text-gold-gradient italic">to explore</span>
               </h2>
               <Link
-                href={PROPERTIES_ANCHOR}
+                href={PROPERTIES_PAGE}
                 className="group inline-flex items-center gap-2 text-sm text-gold-ink"
               >
                 <ArrowLeft className="size-4 transition-transform duration-300 group-hover:-translate-x-1" />

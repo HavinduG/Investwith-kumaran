@@ -61,7 +61,7 @@ export function FeaturedProject({
       onPointerMove={onPointerMove}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
-      className="group/featured relative isolate grid overflow-hidden rounded-[2rem] border border-gold/25 bg-card shadow-[0_50px_120px_-60px_color-mix(in_oklab,var(--gold)_55%,transparent)] [--mx:75%] [--my:20%] lg:grid-cols-12"
+      className="group/featured relative isolate grid grid-cols-1 overflow-hidden rounded-[1.5rem] border border-gold/25 bg-card shadow-[0_50px_120px_-60px_color-mix(in_oklab,var(--gold)_55%,transparent)] [--mx:75%] [--my:20%] sm:rounded-[2rem] lg:grid-cols-12"
     >
       <div
         aria-hidden
@@ -69,8 +69,8 @@ export function FeaturedProject({
       />
 
       {/* -------------------------------- Gallery -------------------------------- */}
-      <div className="relative aspect-4/3 overflow-hidden bg-muted sm:aspect-16/10 lg:col-span-7 lg:aspect-auto lg:min-h-[34rem]">
-        <div data-featured-parallax className="absolute inset-x-0 -inset-y-[6%]">
+      <div className="relative aspect-4/3 min-w-0 overflow-hidden bg-muted sm:aspect-16/10 lg:col-span-7 lg:aspect-auto lg:min-h-136">
+        <div data-featured-parallax className="absolute inset-x-0 inset-y-[-6%]">
           {images.length ? (
             images.map((image, i) => (
               <Image
@@ -97,7 +97,7 @@ export function FeaturedProject({
         <div className="absolute inset-x-0 top-0 h-28 bg-linear-to-b from-black/50 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-36 bg-linear-to-t from-black/60 to-transparent" />
 
-        <div className="absolute inset-x-5 top-5 flex flex-wrap items-center gap-2">
+        <div className="absolute inset-x-4 top-4 flex flex-wrap items-center gap-2 sm:inset-x-5 sm:top-5">
           <span className="flex items-center gap-1.5 rounded-full bg-gold px-3 py-1 font-mono text-[0.6rem] font-medium tracking-[0.2em] text-gold-foreground uppercase shadow-[0_6px_24px_-6px_var(--gold)]">
             <Sparkles className="size-3" />
             Featured
@@ -116,7 +116,7 @@ export function FeaturedProject({
         </div>
 
         {images.length > 1 && (
-          <div className="absolute inset-x-5 bottom-5 flex items-end gap-2">
+          <div className="absolute inset-x-4 bottom-4 flex items-end gap-1.5 sm:inset-x-5 sm:bottom-5 sm:gap-2">
             {images.slice(0, THUMBS).map((image, i) => (
               <button
                 key={image.src}
@@ -125,7 +125,8 @@ export function FeaturedProject({
                 aria-current={i === active}
                 onClick={() => pick(i)}
                 className={cn(
-                  "relative h-12 w-16 overflow-hidden rounded-lg border-2 outline-none transition-all duration-500 focus-visible:ring-2 focus-visible:ring-gold sm:h-14 sm:w-20",
+                  // Thumbnails share the strip on small screens, capped at their desktop size
+                  "relative aspect-4/3 max-w-20 min-w-0 flex-1 overflow-hidden rounded-lg border-2 outline-none transition-all duration-500 focus-visible:ring-2 focus-visible:ring-gold",
                   i === active
                     ? "-translate-y-1 border-gold shadow-[0_8px_24px_-6px_var(--gold)]"
                     : "border-white/20 opacity-75 hover:-translate-y-0.5 hover:border-white/50 hover:opacity-100"
@@ -149,7 +150,7 @@ export function FeaturedProject({
               <Link
                 href={href}
                 aria-label={`See all ${images.length} photos`}
-                className="grid h-12 w-16 place-items-center rounded-lg border-2 border-white/20 bg-black/45 font-mono text-xs text-white backdrop-blur-md transition-colors hover:border-gold hover:text-gold-light sm:h-14 sm:w-20"
+                className="grid aspect-4/3 max-w-20 min-w-0 flex-1 place-items-center rounded-lg border-2 border-white/20 bg-black/45 font-mono text-xs text-white backdrop-blur-md transition-colors hover:border-gold hover:text-gold-light"
               >
                 +{extra}
               </Link>
@@ -159,7 +160,7 @@ export function FeaturedProject({
       </div>
 
       {/* -------------------------------- Details -------------------------------- */}
-      <div className="relative flex flex-col p-6 sm:p-8 lg:col-span-5 lg:p-10">
+      <div className="relative flex min-w-0 flex-col p-5 sm:p-8 lg:col-span-5 lg:p-10">
         <div
           aria-hidden
           className="absolute -top-28 -right-28 -z-10 size-72 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--emerald)_22%,transparent),transparent)]"
@@ -175,7 +176,7 @@ export function FeaturedProject({
         <h3
           id="featured-project-title"
           data-featured-item
-          className="mt-4 font-display text-[clamp(2rem,3.4vw,3rem)] leading-[1.04] font-light tracking-[-0.03em]"
+          className="mt-4 font-display text-[clamp(1.75rem,3.4vw,3rem)] leading-[1.06] font-light tracking-[-0.03em] text-balance wrap-break-word"
         >
           <Link href={href} className="outline-none hover:text-gold-ink focus-visible:text-gold-ink">
             {project.title}
@@ -190,23 +191,23 @@ export function FeaturedProject({
 
         <p
           data-featured-item
-          className="text-gold-gradient mt-6 font-display text-[clamp(1.9rem,3vw,2.6rem)] leading-none"
+          className="text-gold-gradient mt-5 font-display text-[clamp(1.7rem,3vw,2.6rem)] leading-none wrap-break-word sm:mt-6"
         >
           {project.price || "Price on request"}
         </p>
 
         {project.facts.length > 0 && (
-          <ul data-featured-item className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+          <ul data-featured-item className="mt-5 grid grid-cols-2 gap-2 sm:mt-6 sm:grid-cols-3 sm:gap-2.5">
             {project.facts.slice(0, 3).map((fact) => (
               <li
                 key={fact.label}
-                className="rounded-xl border border-border bg-background/40 px-3.5 py-3 transition-colors duration-500 hover:border-gold/40"
+                className="min-w-0 rounded-xl border border-border bg-background/40 px-3 py-2.5 transition-colors duration-500 last:odd:col-span-2 hover:border-gold/40 sm:px-3.5 sm:py-3 sm:last:odd:col-span-1"
               >
                 <p className="flex items-center gap-1.5 font-mono text-[0.56rem] tracking-[0.2em] text-muted-foreground uppercase">
                   <FactIcon label={fact.label} className="size-3 text-gold-ink" />
                   {fact.label}
                 </p>
-                <p className="mt-1.5 text-sm leading-snug font-medium">{fact.value}</p>
+                <p className="mt-1.5 text-sm leading-snug font-medium wrap-break-word">{fact.value}</p>
               </li>
             ))}
           </ul>
@@ -214,12 +215,15 @@ export function FeaturedProject({
 
         <div className="min-h-6 flex-1" />
 
-        <div data-featured-item className="flex flex-wrap items-center gap-3 border-t border-border pt-6">
+        <div
+          data-featured-item
+          className="grid grid-cols-1 gap-2.5 border-t border-border pt-5 sm:flex sm:flex-wrap sm:items-center sm:gap-3 sm:pt-6"
+        >
           {whatsappCta && (
             <Button
               asChild
               size="xl"
-              className="bg-emerald text-white shadow-[0_10px_40px_-12px_var(--emerald)] hover:bg-emerald/90"
+              className="w-full bg-emerald text-white shadow-[0_10px_40px_-12px_var(--emerald)] hover:bg-emerald/90 sm:w-auto"
             >
               <Link
                 href={withWhatsAppMessage(whatsappCta.href, `Hi Kamran, I'm interested in ${project.title}. Could you share more details?`)}
@@ -230,7 +234,7 @@ export function FeaturedProject({
               </Link>
             </Button>
           )}
-          <Button asChild variant="glass" size="xl">
+          <Button asChild variant="glass" size="xl" className="w-full sm:w-auto">
             <Link href={href}>
               View project
               <ArrowUpRight className="transition-transform duration-300 group-hover/button:rotate-45" />
